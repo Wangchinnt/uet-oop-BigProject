@@ -25,11 +25,9 @@ import static bomberman.view.Game.*;
 public class Map {
 
   private int level;
-  public File mapFile;
+  private final File mapFile;
   private int col;
-
   private int row;
-
 
   public Map(File file) {
     mapFile = file;
@@ -129,7 +127,7 @@ public class Map {
     for (Zombie zombie : zombies) {
       addZombieToGame(zombie);
     }
-    for (Robot robot :robots) {
+    for (Robot robot : robots) {
       addRobotToGame(robot);
     }
     for (Portal portal : portals) {
@@ -145,6 +143,7 @@ public class Map {
       addBombItemToGame(bombItem);
     }
   }
+
   public int getCol() {
     return col;
   }
@@ -152,8 +151,4 @@ public class Map {
   public int getRow() {
     return row;
   }
-
-
-
-
 }

@@ -58,13 +58,25 @@ public class Zombie implements MovingEntity, KillableEntity {
         currentSprite = zombieAnimations.getIdle();
         currentDirection = getRandomDirection();
     }
-
-    private void setCurrentSprite(Sprite s) {
-        if (s != null) {
-            currentSprite = s;
-        } else {
-            System.out.println("Sprite missing!");
+    @Override
+    public void update() {
+        if (!isAlive) {
+            timeDelayZ++;
         }
+        else move(speed, currentDirection);
+        if (timeDelayZ == 40) {
+            removeFromScene();
+            int sum = Game.getZombies().size() + Game.getRobots().size();
+            GameVariables.score += 25;
+            Game.getLabelList().get(3).setText("Enemy: " + sum);
+            Game.getLabelList().get(2).setText("Score: " + GameVariables.score);
+        }
+    }
+
+    @Override
+    public boolean isColliding(Entity b) {
+        RectBoundedBox otherEntityBoundary = b.getBoundingBox();
+        return zombieBoundary.checkCollision(otherEntityBoundary);
     }
 
     private boolean checkCollisions(double x, double y) {
@@ -76,126 +88,11 @@ public class Zombie implements MovingEntity, KillableEntity {
                 if (e instanceof Player) {
                     ((Player) e).die();
                 }
-        /*System.out.println(
-            "Zombie x="
-                + getPositionX()
-                + " y="
-                + getPositionY()
-                + " colliding with x="
-                + e.getPositionX()
-                + " y="
-                + e.getPositionY());*/
-
                 return false;
             }
         }
         zombieBoundary.setPosition(positionX, positionY, getReduceBoundarySizePercent());
         return true;
-    }
-
-    @Override
-    public boolean isColliding(Entity b) {
-        RectBoundedBox otherEntityBoundary = b.getBoundingBox();
-        return zombieBoundary.checkCollision(otherEntityBoundary);
-    }
-
-    @Override
-    public void update() {
-        if (!isAlive) {
-            timeDelayZ++;
-        }
-        else autoMove();
-        if (timeDelayZ == 55) {
-            removeFromScene();
-            int sum = Game.getZombies().size() + Game.getRobots().size();
-            GameVariables.score += 25;
-            Game.getLabelList().get(3).setText("Enemy: " + sum);
-            Game.getLabelList().get(2).setText("Score: " + GameVariables.score);
-        }
-    }
-
-    @Override
-    public boolean isPlayerCollisionFriendly() {
-        return false;
-    }
-
-    @Override
-    public void draw() {
-        if (currentSprite != null) {
-            Renderer.playAnimation(currentSprite);
-        }
-    }
-
-    @Override
-    public void removeFromScene() {
-        Game.getEntities().remove(this);
-        Game.getZombies().remove(this);
-    }
-
-    @Override
-    public double getPositionX() {
-        return positionX;
-    }
-
-    @Override
-    public double getPositionY() {
-        return positionY;
-    }
-
-    @Override
-    public RectBoundedBox getBoundingBox() {
-        return zombieBoundary;
-    }
-
-    @Override
-    public int getLayer() {
-        return layer;
-    }
-
-    @Override
-    public double getScale() {
-        return scale;
-    }
-
-    @Override
-    public void die() {
-        currentSprite = zombieAnimations.getDie();
-        timeDelayZ = 0;
-        isAlive = false;
-        speed = 0;
-    }
-
-    @Override
-    public void reduceHealth(int damage) {
-    }
-
-    @Override
-    public int getHealth() {
-        return 0;
-    }
-
-    public Direction getRandomDirection() {
-        Random random = new Random();
-        int i = random.nextInt(4) + 1;
-        Direction randomDirection = null;
-        if (i == 1) {
-            randomDirection = UP;
-        }
-        if (i == 2) {
-            randomDirection = DOWN;
-        }
-        if (i == 3) {
-            randomDirection = LEFT;
-        }
-        if (i == 4) {
-            randomDirection = RIGHT;
-        }
-        return randomDirection;
-    }
-
-
-    public void autoMove() {
-        move(speed, currentDirection);
     }
 
     public void move(double steps, Direction direction) {
@@ -236,6 +133,96 @@ public class Zombie implements MovingEntity, KillableEntity {
                     setCurrentSprite(zombieAnimations.getIdle());
             }
         }
+    }
+
+    @Override
+    public boolean isPlayerCollisionFriendly() {
+        return false;
+    }
+
+
+    private void setCurrentSprite(Sprite s) {
+        if (s != null) {
+            currentSprite = s;
+        } else {
+            System.out.println("Sprite missing!");
+        }
+    }
+
+
+    @Override
+    public void draw() {
+        if (currentSprite != null) {
+            Renderer.playAnimation(currentSprite);
+        }
+    }
+
+    @Override
+    public void removeFromScene() {
+        Game.getEntities().remove(this);
+        Game.getZombies().remove(this);
+    }
+
+    @Override
+    public void die() {
+        currentSprite = zombieAnimations.getDie();
+        timeDelayZ = 0;
+        isAlive = false;
+        speed = 0;
+    }
+
+    @Override
+    public double getPositionX() {
+        return positionX;
+    }
+
+    @Override
+    public double getPositionY() {
+        return positionY;
+    }
+
+    @Override
+    public RectBoundedBox getBoundingBox() {
+        return zombieBoundary;
+    }
+
+    @Override
+    public int getLayer() {
+        return layer;
+    }
+
+    @Override
+    public double getScale() {
+        return scale;
+    }
+
+
+    @Override
+    public void reduceHealth(int damage) {
+    }
+
+    @Override
+    public int getHealth() {
+        return 0;
+    }
+
+    public Direction getRandomDirection() {
+        Random random = new Random();
+        int i = random.nextInt(4) + 1;
+        Direction randomDirection = null;
+        if (i == 1) {
+            randomDirection = UP;
+        }
+        if (i == 2) {
+            randomDirection = DOWN;
+        }
+        if (i == 3) {
+            randomDirection = LEFT;
+        }
+        if (i == 4) {
+            randomDirection = RIGHT;
+        }
+        return randomDirection;
     }
 
 

@@ -74,7 +74,7 @@ public class BlackBomb implements StaticEntity {
     entityBoundary.setPosition(x, y, 0);
     for (int j = e.size() - 1; j >= 0; j--) {
       if (e.get(j) instanceof BlackBomb) {
-        if (isExploding()) {
+        if (isExploding() && isColliding(e.get(j))) {
           ((BlackBomb) e.get(j)).setBombState(STATE.EXPLODING);
         }
       }

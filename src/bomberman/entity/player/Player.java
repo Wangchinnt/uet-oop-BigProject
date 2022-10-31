@@ -61,57 +61,24 @@ public class Player implements MovingEntity, KillableEntity {
     currentSprite = playerAnimations.getPlayerIdleSprite();
   }
 
-  private void setCurrentSprite(Sprite s) {
-    if (s != null) {
-      currentSprite = s;
-    } else {
-      System.out.println("Sprite missing!");
-    }
-  }
-
-  public int getHealth() {
-    return health;
-  }
-
-  public boolean isAlive() {
-    return isAlive;
-  }
-
-  public String toString() {
-    return name;
-  }
-
-  @Override
-  public boolean isColliding(Entity b) {
-    // playerBoundary.setPosition(positionX, positionY);
-    RectBoundedBox otherEntityBoundary = b.getBoundingBox();
-    return playerBoundary.checkCollision(otherEntityBoundary);
-  }
-
-  @Override
-  public void draw() {
-    Renderer.playAnimation(currentSprite);
-  }
-
-  @Override
-  public void die() {
-    currentSprite = playerAnimations.getDieSprite();
-    timeDelayP = 0;
-    isAlive = false;
-  }
-
   @Override
   public void update() {
     if (!isAlive) {
       timeDelayP++;
     }
     if (timeDelayP == 55) {
+      removeFromScene();
       Renderer.createGameOver();
       Game.gameStatus = GlobalConstants.GameStatus.GameOver;
-      removeFromScene();
     }
     this.setTimeToDropBoom();
     this.decrementTimeToDropBoom();
+  }
+
+  @Override
+  public boolean isColliding(Entity b) {
+    RectBoundedBox otherEntityBoundary = b.getBoundingBox();
+    return playerBoundary.checkCollision(otherEntityBoundary);
   }
 
   private boolean checkCollisions(double x, double y) {
@@ -173,6 +140,41 @@ public class Player implements MovingEntity, KillableEntity {
   }
 
   @Override
+  public boolean isPlayerCollisionFriendly() {
+    return false;
+  }
+
+  private void setCurrentSprite(Sprite s) {
+    if (s != null) {
+      currentSprite = s;
+    } else {
+      System.out.println("Sprite missing!");
+    }
+  }
+
+  @Override
+  public void draw() {
+    Renderer.playAnimation(currentSprite);
+  }
+
+  @Override
+  public void removeFromScene() {
+    Game.getEntities().remove(this);
+    Game.getPlayers().remove(this);
+  }
+
+  @Override
+  public void die() {
+    currentSprite = playerAnimations.getDieSprite();
+    timeDelayP = 0;
+    isAlive = false;
+  }
+
+  public int getHealth() {
+    return health;
+  }
+
+  @Override
   public void reduceHealth(int damage) {
     if (health - damage <= 0) {
       die();
@@ -181,10 +183,12 @@ public class Player implements MovingEntity, KillableEntity {
     }
   }
 
-  @Override
-  public void removeFromScene() {
-    Game.getEntities().remove(this);
-    Game.getPlayers().remove(this);
+  public boolean isAlive() {
+    return isAlive;
+  }
+
+  public String toString() {
+    return name;
   }
 
   @Override
@@ -204,11 +208,6 @@ public class Player implements MovingEntity, KillableEntity {
   }
 
   @Override
-  public boolean isPlayerCollisionFriendly() {
-    return false;
-  }
-
-  @Override
   public int getLayer() {
     return layer;
   }
@@ -224,10 +223,6 @@ public class Player implements MovingEntity, KillableEntity {
 
   public double getReduceBoundarySizePercent() {
     return reduceBoundarySizePercent;
-  }
-
-  public void setReduceBoundarySizePercent(double reduceBoundarySizePercent) {
-    this.reduceBoundarySizePercent = reduceBoundarySizePercent;
   }
 
   public boolean hasMoreBombs() {
@@ -263,6 +258,7 @@ public class Player implements MovingEntity, KillableEntity {
   public void setSteps(double steps) {
     this.steps = steps;
   }
+
   public int getBombCount() {
     return bombCount;
   }

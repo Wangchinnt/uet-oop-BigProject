@@ -10,9 +10,6 @@ import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -24,7 +21,6 @@ public class Renderer {
     renderImage(GlobalConstants.bombItem, 600, -5, false);
     renderImage(GlobalConstants.flameItem, 660, -5, false);
     renderImage(GlobalConstants.speedItem, 720, -5, false);
-
   }
 
   public static void playAnimation(Sprite sprite) {
@@ -115,13 +111,6 @@ public class Renderer {
     gc.drawImage(imgs[index], x - camera.getCamX(), y, w, h);
   }
 
-  public static void renderText(String mes, int x, int y) {
-    Text text = new Text(x, y, mes);
-    text.setFill(Color.BLACK);
-    text.setFont(Font.font("Pixel", 23));
-    Game.getGamePane().getChildren().add(text);
-  }
-
   public static void renderImage(Image fileImage, int x, int y, boolean isPauseButton) {
     ImageView img = new ImageView(fileImage);
     img.setLayoutX(x);
@@ -132,27 +121,26 @@ public class Renderer {
     Game.getGamePane().getChildren().add(img);
     if (isPauseButton) {
       img.setPickOnBounds(true);
-      img.setOnMouseEntered(
-              event -> img.setEffect(new DropShadow()));
+      img.setOnMouseEntered(event -> img.setEffect(new DropShadow()));
 
       img.setOnMouseClicked(
-              new EventHandler<>() {
-                @Override
-                public void handle(MouseEvent event) {
-                  Game.getGamePane().getChildren().remove(img);
-                  Game.gameStatus = GlobalConstants.GameStatus.Running;
-                }
-              });
+          new EventHandler<>() {
+            @Override
+            public void handle(MouseEvent event) {
+              Game.getGamePane().getChildren().remove(img);
+              Game.gameStatus = GlobalConstants.GameStatus.Running;
+            }
+          });
       img.setOnMouseExited(
-              new EventHandler<>() {
-                @Override
-                public void handle(MouseEvent event) {
-                  img.setEffect(null);
-                }
-              });
+          new EventHandler<>() {
+            @Override
+            public void handle(MouseEvent event) {
+              img.setEffect(null);
+            }
+          });
     }
-
   }
+
   public static void createGameOver() {
     try {
       Game.playSound(4);
@@ -176,22 +164,22 @@ public class Renderer {
     Game.getGamePane().getChildren().add(no);
 
     yes.setOnMouseClicked(
-            new EventHandler<>() {
-              @Override
-              public void handle(MouseEvent event) {
-                Game.reset();
-                Game.createNewGame(Game.getGameStage());
-              }
-            });
+        new EventHandler<>() {
+          @Override
+          public void handle(MouseEvent event) {
+            Game.reset();
+            Game.setLevel(1);
+            Game.createNewGame(Game.getGameStage());
+          }
+        });
     no.setOnMouseClicked(
-            new EventHandler<>() {
-              @Override
-              public void handle(MouseEvent event) {
-               Game.getGameStage().close();
-              }
-            });
+        new EventHandler<>() {
+          @Override
+          public void handle(MouseEvent event) {
+            Game.getGameStage().close();
+          }
+        });
   }
-
 
   private static int findCurrentFrame(double time, int totalFrames, double speed) {
     return (int) (time % (totalFrames * speed) / speed);

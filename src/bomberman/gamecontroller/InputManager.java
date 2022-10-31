@@ -56,7 +56,4 @@ public class InputManager {
                 }
         }
     }
-    public static void handleController() {
-
-    }
 }

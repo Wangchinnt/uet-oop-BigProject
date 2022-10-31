@@ -7,6 +7,7 @@ import bomberman.entity.Entity;
 import bomberman.entity.StaticEntity;
 import bomberman.entity.boundedbox.RectBoundedBox;
 import bomberman.entity.player.Player;
+import bomberman.gamecontroller.GameVariables;
 import bomberman.view.Game;
 
 public class Portal implements StaticEntity {
@@ -43,8 +44,10 @@ public class Portal implements StaticEntity {
     public void update() {
         Player p = Game.getPlayer();
         if (isColliding(p)) {
+            int oldScore = GameVariables.score;
             Game.setLevel(Game.getLevel() + 1);
             Game.reset();
+            GameVariables.score = oldScore;
             Game.createNewGame(Game.getGameStage());
         }
     }

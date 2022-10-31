@@ -12,7 +12,7 @@ public class Sound {
             "resource/sounds/DropBomb.wav",
             "resource/sounds/powerUp.wav",
             "resource/sounds/burning.wav",
-            "resource/sounds/gameover.wav"};
+            "resource/sounds/gameOver.wav"};
 
     Clip clip;
 

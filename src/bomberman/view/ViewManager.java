@@ -28,7 +28,7 @@ public class ViewManager {
   private static final int HEIGHT = 640;
   private static final int MENU_BUTTONS_START_X = 50;
   private static final int MENU_BUTTONS_START_Y = 30;
-  List<BomberManButton> menuButtons;
+  private List<BomberManButton> menuButtons;
   private AnchorPane mainPane;
   private Scene mainScene;
   private Stage mainStage;
@@ -37,17 +37,12 @@ public class ViewManager {
   private BomberManSubScene scoreSubScene;
   private BomberManSubScene characterChooseScene;
   private BomberManSubScene sceneToHide;
-
   private PlayerPicker male;
-
-  private final boolean[] musicEnabled = {false};
-
-
 
   private PlayerPicker female;
 
   private Sound sound;
-
+  private final boolean[] musicEnabled = {false};
   private Image playerImage;
 
   public ViewManager() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
@@ -141,11 +136,11 @@ public class ViewManager {
     startButton.setOnAction(
         new EventHandler<ActionEvent>() {
           public void handle(ActionEvent event) {
-            playerImage = male.getCircleChoosen() ? GlobalConstants.maleImage : GlobalConstants.femaleImage;
+            playerImage =
+                male.getCircleChoosen() ? GlobalConstants.maleImage : GlobalConstants.femaleImage;
             Game.setPlayerImage(playerImage);
             Game.createNewGame(mainStage);
             Game.setMusicEnabled(!musicEnabled[0]);
-
           }
         });
     return startButton;
@@ -280,7 +275,4 @@ public class ViewManager {
         });
     mainPane.getChildren().add(logo);
   }
-
-
-
 }

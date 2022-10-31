@@ -5,12 +5,11 @@ import bomberman.animations.Sprite;
 import bomberman.constants.GlobalConstants;
 import bomberman.entity.Entity;
 import bomberman.entity.KillableEntity;
-import bomberman.entity.StaticEntity;
 import bomberman.entity.boundedbox.RectBoundedBox;
 import bomberman.gamecontroller.GameVariables;
 import bomberman.view.Game;
 
-public class Brick implements StaticEntity, KillableEntity {
+public class Brick implements KillableEntity {
 
     private final int width;
     private final int height;

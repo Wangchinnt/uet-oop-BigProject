@@ -3,7 +3,6 @@ package bomberman.view;
 import bomberman.GameLoop;
 import bomberman.Renderer;
 import bomberman.Sound;
-import bomberman.constants.GlobalConstants;
 import bomberman.entity.Entity;
 import bomberman.entity.enermy.Astar.PathFinder;
 import bomberman.entity.enermy.Robot;
@@ -81,16 +80,10 @@ public class Game {
         }
       };
 
-  public static Stage getGameStage() {
-    return gameStage;
-  }
-
   public static PathFinder pFinder;
 
-  private static boolean sceneStarted;
   private static final Vector<Grass> grasses = new Vector<Grass>();
   private static final Vector<Portal> portals = new Vector<Portal>();
-
   private static final Vector<SpeedItem> speedItems = new Vector<>();
 
   private static final Vector<FlameItem> flameItems = new Vector<>();
@@ -114,6 +107,7 @@ public class Game {
     gamePane.getChildren().add(gameCanvas);
     gameStage = new Stage();
     gameStage.setScene(gameScene);
+    gameStage.setTitle(GAME_NAME);
     gc = gameCanvas.getGraphicsContext2D();
     gc.setStroke(Color.BLUE);
     gc.setLineWidth(2);
@@ -133,8 +127,14 @@ public class Game {
     createLabel();
     pFinder = new PathFinder();
     EventHandler.attachEventHandlers(gameScene);
-    gameStatus = GameStatus.Running;
+    Game.gameStatus = GameStatus.Running;
+  }
 
+  public static void playSound(int i)
+      throws UnsupportedAudioFileException, LineUnavailableException, IOException {
+    sound.setAudio(i);
+    if (musicEnabled) sound.playSound();
+    else sound.pauseAudio();
   }
 
   public static void createNewGame(Stage menuStage) {
@@ -167,7 +167,6 @@ public class Game {
     Game.getRobots().clear();
     Game.getWalls().clear();
     Game.getPortals().clear();
-    Game.getGraphicsContext().clearRect(0, 0, GlobalConstants.CANVAS_WIDTH, GlobalConstants.CANVAS_WIDTH);
     Game.getGraphicsContext().restore();
     Game.getGameStage().close();
   }
@@ -224,20 +223,12 @@ public class Game {
     gamePane.getChildren().addAll(labelList);
   }
 
-  public static Vector<Entity> getEntities() {
-    return entities;
-  }
-
   public static void addGrassToGame(Grass e) {
     if (!grasses.contains(e)) {
       grasses.add(e);
       entities.add(e);
       entities.sort(layerComparator);
     }
-  }
-
-  public static Vector<Grass> getGrasses() {
-    return grasses;
   }
 
   public static void addBlackBombsToGame(BlackBomb e) {
@@ -248,20 +239,12 @@ public class Game {
     }
   }
 
-  public static Vector<BlackBomb> getBlackBombs() {
-    return blackBombs;
-  }
-
   public static void addPortalToGame(Portal e) {
     if (!portals.contains(e)) {
       portals.add(e);
       entities.add(e);
       entities.sort(layerComparator);
     }
-  }
-
-  public static Vector<Portal> getPortals() {
-    return portals;
   }
 
   public static void addSpeedItemToGame(SpeedItem e) {
@@ -272,20 +255,12 @@ public class Game {
     }
   }
 
-  public static Vector<SpeedItem> getSpeedItems() {
-    return speedItems;
-  }
-
   public static void addFlameItemToGame(FlameItem e) {
     if (!flameItems.contains(e)) {
       flameItems.add(e);
       entities.add(e);
       entities.sort(layerComparator);
     }
-  }
-
-  public static Vector<FlameItem> getFlameItems() {
-    return flameItems;
   }
 
   public static void addBombItemToGame(BombItem e) {
@@ -296,20 +271,12 @@ public class Game {
     }
   }
 
-  public static Vector<BombItem> getBombItems() {
-    return bombItems;
-  }
-
   public static void addPlayerToGame(Player e) {
     if (!players.contains(e)) {
       players.add(e);
       entities.add(e);
       entities.sort(layerComparator);
     }
-  }
-
-  public static Vector<Player> getPlayers() {
-    return players;
   }
 
   public static void addZombieToGame(Zombie e) {
@@ -320,20 +287,12 @@ public class Game {
     }
   }
 
-  public static Vector<Zombie> getZombies() {
-    return zombies;
-  }
-
   public static void addRobotToGame(Robot e) {
     if (!robots.contains(e)) {
       robots.add(e);
       entities.add(e);
       entities.sort(layerComparator);
     }
-  }
-
-  public static Vector<Robot> getRobots() {
-    return robots;
   }
 
   public static void addWallToGame(Wall e) {
@@ -344,20 +303,12 @@ public class Game {
     }
   }
 
-  public static Vector<Wall> getWalls() {
-    return walls;
-  }
-
   public static void addBrickToGame(Brick e) {
     if (!bricks.contains(e)) {
       bricks.add(e);
       entities.add(e);
       entities.sort(layerComparator);
     }
-  }
-
-  public static Vector<Brick> getBricks() {
-    return bricks;
   }
 
   public static Scene getScene() {
@@ -393,16 +344,59 @@ public class Game {
     return gamePane;
   }
 
-  public static void playSound(int i)
-      throws UnsupportedAudioFileException, LineUnavailableException, IOException {
-      sound.setAudio(i);
-      if (musicEnabled)
-      sound.playSound();
-      else sound.pauseAudio();
-
-  }
-
   public static int getLevel() {
     return level;
+  }
+
+  public static Stage getGameStage() {
+    return gameStage;
+  }
+
+  public static Vector<Grass> getGrasses() {
+    return grasses;
+  }
+
+  public static Vector<Entity> getEntities() {
+    return entities;
+  }
+
+  public static Vector<BlackBomb> getBlackBombs() {
+    return blackBombs;
+  }
+
+  public static Vector<Portal> getPortals() {
+    return portals;
+  }
+
+  public static Vector<SpeedItem> getSpeedItems() {
+    return speedItems;
+  }
+
+  public static Vector<FlameItem> getFlameItems() {
+    return flameItems;
+  }
+
+  public static Vector<BombItem> getBombItems() {
+    return bombItems;
+  }
+
+  public static Vector<Player> getPlayers() {
+    return players;
+  }
+
+  public static Vector<Zombie> getZombies() {
+    return zombies;
+  }
+
+  public static Vector<Robot> getRobots() {
+    return robots;
+  }
+
+  public static Vector<Wall> getWalls() {
+    return walls;
+  }
+
+  public static Vector<Brick> getBricks() {
+    return bricks;
   }
 }

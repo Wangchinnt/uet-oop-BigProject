@@ -21,23 +21,17 @@ import static java.lang.Math.round;
 
 public class Robot implements MovingEntity, KillableEntity {
 
-  public Direction currentDirection;
+  private Direction currentDirection;
 
   private double positionX;
 
   private double positionY;
 
-  RectBoundedBox robotBoundary;
-  Sprite currentSprite;
+  private RectBoundedBox robotBoundary;
+  private Sprite currentSprite;
 
-  RobotAnimations robotAnimations;
+  private RobotAnimations robotAnimations;
 
-  int layer;
-
-  String name;
-
-  double scale = 1;
-  double reduceBoundarySizePercent = 0;
   private int health;
 
   private boolean isAlive;
@@ -48,15 +42,16 @@ public class Robot implements MovingEntity, KillableEntity {
 
   public int timeDelayR = 0;
 
+  int layer;
 
+  String name;
+
+  double scale = 1;
+  double reduceBoundarySizePercent = 0;
 
   public Robot(double posX, double posY) {
     init(posX, posY);
     layer = 2;
-  }
-
-  public double getReduceBoundarySizePercent() {
-    return reduceBoundarySizePercent;
   }
 
   private void init(double posX, double posY) {
@@ -79,14 +74,25 @@ public class Robot implements MovingEntity, KillableEntity {
     currentDirection = getRandomDirection();
   }
 
-  private void setCurrentSprite(Sprite s) {
-    if (s != null) {
-      currentSprite = s;
-    } else {
-      System.out.println("Sprite missing!");
+  @Override
+  public void update() {
+    if (!isAlive) {
+      timeDelayR++;
+    } else autoMove();
+    if (timeDelayR == 40) {
+      removeFromScene();
+      int sum = Game.getZombies().size() + Game.getRobots().size();
+      GameVariables.score += 50;
+      Game.getLabelList().get(3).setText("Enemy: " + sum);
+      Game.getLabelList().get(2).setText("Score: " + GameVariables.score);
     }
   }
 
+  @Override
+  public boolean isColliding(Entity b) {
+    RectBoundedBox otherEntityBoundary = b.getBoundingBox();
+    return robotBoundary.checkCollision(otherEntityBoundary);
+  }
 
   private boolean checkCollisions(double x, double y) {
     robotBoundary.setPosition(x, y, getReduceBoundarySizePercent());
@@ -98,15 +104,6 @@ public class Robot implements MovingEntity, KillableEntity {
           onPath = false;
           ((Player) e).die();
         }
-        /*System.out.println(
-        "Zombie x="
-            + getPositionX()
-            + " y="
-            + getPositionY()
-            + " colliding with x="
-            + e.getPositionX()
-            + " y="
-            + e.getPositionY());*/
 
         return false;
       }
@@ -115,35 +112,22 @@ public class Robot implements MovingEntity, KillableEntity {
     return true;
   }
 
-  @Override
-  public boolean isColliding(Entity b) {
-    RectBoundedBox otherEntityBoundary = b.getBoundingBox();
-    return robotBoundary.checkCollision(otherEntityBoundary);
+  private void setCurrentSprite(Sprite s) {
+    if (s != null) {
+      currentSprite = s;
+    } else {
+      System.out.println("Sprite missing!");
+    }
   }
 
-  @Override
-  public void update() {
-    if (!isAlive) {
-      timeDelayR++;
+  private void autoMove() {
+    int x = (int) round(getPlayer().positionX + 5) / 64;
+    int y = (int) round(getPlayer().positionY + 6) / 64;
+    if (onPath) {
+      searchPath(x, y);
     }
-    else autoMove();
-    if (timeDelayR == 55) {
-      removeFromScene();
-      int sum = Game.getZombies().size() + Game.getRobots().size();
-      GameVariables.score += 50;
-      Game.getLabelList().get(3).setText("Enemy: " + sum);
-      Game.getLabelList().get(2).setText("Score: " + GameVariables.score);
-    }
-
-  }
-
-  public void autoMove() {
-    int x = (int) round(getPlayer().positionX + 6 ) / 64 ;
-    int y = (int) round(getPlayer().positionY + 5 ) / 64 ;
-    searchPath(x,y);
     move(speed, currentDirection);
   }
-
 
   public void move(double steps, Direction direction) {
     if (steps == 0) {
@@ -203,63 +187,11 @@ public class Robot implements MovingEntity, KillableEntity {
   }
 
   @Override
-  public double getPositionX() {
-    return positionX;
-  }
-
-  @Override
-  public double getPositionY() {
-    return positionY;
-  }
-
-  @Override
-  public RectBoundedBox getBoundingBox() {
-    return robotBoundary;
-  }
-
-  @Override
-  public int getLayer() {
-    return layer;
-  }
-
-  @Override
-  public double getScale() {
-    return scale;
-  }
-
-  @Override
   public void die() {
     currentSprite = robotAnimations.getDie();
     timeDelayR = 0;
     isAlive = false;
     speed = 0;
-  }
-
-  @Override
-  public void reduceHealth(int damage) {}
-
-  @Override
-  public int getHealth() {
-    return 0;
-  }
-
-  public Direction getRandomDirection() {
-    Random random = new Random();
-    int i = random.nextInt(4) + 1;
-    Direction randomDirection = null;
-    if (i == 1) {
-      randomDirection = DOWN;
-    }
-    if (i == 2) {
-      randomDirection = UP;
-    }
-    if (i == 3) {
-      randomDirection = LEFT;
-    }
-    if (i == 4) {
-      randomDirection = RIGHT;
-    }
-    return randomDirection;
   }
 
   public void searchPath(int goalCol, int goalRow) {
@@ -289,5 +221,61 @@ public class Robot implements MovingEntity, KillableEntity {
         onPath = false;
       }
     }
+  }
+
+  @Override
+  public double getPositionX() {
+    return positionX;
+  }
+
+  @Override
+  public double getPositionY() {
+    return positionY;
+  }
+
+  @Override
+  public RectBoundedBox getBoundingBox() {
+    return robotBoundary;
+  }
+
+  @Override
+  public int getLayer() {
+    return layer;
+  }
+
+  @Override
+  public double getScale() {
+    return scale;
+  }
+
+  @Override
+  public void reduceHealth(int damage) {}
+
+  @Override
+  public int getHealth() {
+    return 0;
+  }
+
+  public Direction getRandomDirection() {
+    Random random = new Random();
+    int i = random.nextInt(4) + 1;
+    Direction randomDirection = null;
+    if (i == 1) {
+      randomDirection = DOWN;
+    }
+    if (i == 2) {
+      randomDirection = UP;
+    }
+    if (i == 3) {
+      randomDirection = LEFT;
+    }
+    if (i == 4) {
+      randomDirection = RIGHT;
+    }
+    return randomDirection;
+  }
+
+  public double getReduceBoundarySizePercent() {
+    return reduceBoundarySizePercent;
   }
 }

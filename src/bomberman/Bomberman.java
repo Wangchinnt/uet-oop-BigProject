@@ -1,5 +1,6 @@
 package bomberman;
 
+import bomberman.view.Game;
 import bomberman.view.ViewManager;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -17,8 +18,15 @@ public class Bomberman extends Application {
       ViewManager manager = new ViewManager();
       primaryStage = manager.getMainStage();
       primaryStage.show();
+
     } catch (Exception e) {
       e.printStackTrace();
     }
+    Stage finalPrimaryStage = primaryStage;
+    primaryStage.setOnCloseRequest(
+            event -> {
+              event.consume();
+              Game.createWindowExit(finalPrimaryStage);
+    });
   }
 }
